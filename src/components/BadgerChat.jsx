@@ -19,18 +19,74 @@ export default function App() {
   const [chatrooms, setChatrooms] = useState([]);
 
   useEffect(() => {
-    // hmm... maybe I should load the chatroom names here
-    setChatrooms(["Hello", "World"]) // for example purposes only!
+    fetch("https://cs571.org/api/s24/hw9/chatrooms",{
+      method:"Get",
+      headers:{
+        "X-CS571-ID": 'bid_f797898160368bd8134003297afb0e1e9caa655bdd7e50fd71dda9b6872f0f4a'
+      }
+    }).then(response=>{
+      if(response.ok){
+        return response.json();
+      }
+    }).then(data=>{
+      setChatrooms(data);
+    })
   }, []);
 
   function handleLogin(username, password) {
-    // hmm... maybe this is helpful!
-    setIsLoggedIn(true); // I should really do a fetch to login first!
+    fetch("https://cs571.org/api/s24/hw9/login",{
+      method:"Post",
+      headers:{
+        "X-CS571-ID": 'bid_f797898160368bd8134003297afb0e1e9caa655bdd7e50fd71dda9b6872f0f4a',
+        "Content-Type": "application/json"
+      },
+      body:JSON.stringify({
+        "username":username,
+        "password":password,
+      }),
+    }).then(response => {
+      if(response.ok){
+          alert(`Successful!`);
+          setIsLoggedIn(true);
+          return response.json();
+      }else{
+        response.json().then(data => {
+          alert(data.msg);
+      });
+      }
+  }).then(data=>{
+    console.log(data);
+    SecureStore.setItemAsync("username",data.user.username);
+    SecureStore.setItemAsync(data.user.username,data.token);
+  }) // I should really do a fetch to login first!
   }
 
   function handleSignup(username, password) {
-    // hmm... maybe this is helpful!
-    setIsLoggedIn(true); // I should really do a fetch to register first!
+    fetch("https://cs571.org/api/s24/hw9/register",{
+      method:"Post",
+      headers:{
+        "X-CS571-ID": 'bid_f797898160368bd8134003297afb0e1e9caa655bdd7e50fd71dda9b6872f0f4a',
+        "Content-Type": "application/json"
+      },
+      body:JSON.stringify({
+        "username":username,
+        "password":password,
+      }),
+    }).then(response => {
+      if(response.ok){
+          alert(`Successful!`);
+          setIsLoggedIn(true);
+          return response.json();
+      }else{
+        response.json().then(data => {
+          alert(data.msg);
+      });
+      }
+  }).then(data=>{
+    SecureStore.setItemAsync("username",data.user.username);
+    SecureStore.setItemAsync(data.user.username,data.token);
+  })
+     // I should really do a fetch to register first!
   }
 
   if (isLoggedIn) {

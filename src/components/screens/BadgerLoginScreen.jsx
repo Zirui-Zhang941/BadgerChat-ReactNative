@@ -1,13 +1,30 @@
-import { Alert, Button, StyleSheet, Text, View } from "react-native";
+import { useState } from "react";
+import { Alert, Button, StyleSheet, Text, View,TextInput } from "react-native";
 
 function BadgerLoginScreen(props) {
+    const [username,setUsername]=useState();
+    const [Password,setPassword]=useState();
     return <View style={styles.container}>
         <Text style={{ fontSize: 36 }}>BadgerChat Login</Text>
-        <Text>Hmmm... I should add inputs here!</Text>
+        <Text>Username:</Text>
+        <TextInput
+            placeholder="Username"
+            value={username}
+            onChangeText={setUsername}
+            autoCapitalize="none"
+        />
+        <Text>Password:</Text>
+        <TextInput
+            placeholder="Password"
+            value={Password}
+            onChangeText={setPassword}
+            autoCapitalize="none"
+            secureTextEntry
+        />
+        
         <Button color="crimson" title="Login" onPress={() => {
-            Alert.alert("Hmmm...", "I should check the user's credentials!");
-            props.handleLogin("myusername", "mypassword")
-        }} />
+            props.handleLogin(username, Password)
+        }} disabled={!username||!Password}/>
         <Button color="grey" title="Signup" onPress={() => props.setIsRegistering(true)} />
     </View>;
 }
