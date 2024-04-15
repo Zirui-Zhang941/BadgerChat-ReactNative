@@ -12,6 +12,12 @@ function BadgerChatroomScreen(props) {
     const [Body,setBody]=useState();
     const [token,setToken]=useState();
     const [user,setUser]=useState();
+    SecureStore.getItemAsync("username").then(result=>{
+            setUser(result);
+    })
+    SecureStore.getItemAsync(user).then(result=>{
+            setToken(result);
+    })
     function refresh() {
         setIsLoading(true);
         fetch(`https://cs571.org/api/s24/hw9/messages?chatroom=${props.name}`,{
@@ -34,16 +40,10 @@ function BadgerChatroomScreen(props) {
     }
     useEffect(() => {
         refresh();
-        SecureStore.getItemAsync("username").then(result=>{
-            setUser(result);
-        })
-        SecureStore.getItemAsync(user).then(result=>{
-            setToken(result);
-        })
     }, [])
-
+    //console.log(user);
+    //console.log(token);
     const handleCreatePost=()=>{
-        
         fetch(`https://cs571.org/api/s24/hw9/messages?chatroom=${props.name}`,{
             method:"Post",
             headers:{
@@ -68,6 +68,8 @@ function BadgerChatroomScreen(props) {
         })
     }
 
+
+
     return <View style={{ flex: 1 }}>
         <FlatList
         data={Allmessage}
@@ -77,10 +79,13 @@ function BadgerChatroomScreen(props) {
         // Be warned! renderItem takes a callback function, where the parameter is
         // an object of `index` and the current `item`
         renderItem={renderObj => <BadgerChatMessage
+            Id={renderObj.item.id}
+            refresh={refresh}
+            token={token}
             title={renderObj.item.title}
             poster={renderObj.item.poster}
             contect={renderObj.item.content}
-            chatroom={renderObj.item.chatroom}
+            //chatroom={renderObj.item.chatroom}
             created={renderObj.item.created}
             />
         }
@@ -121,10 +126,12 @@ function BadgerChatroomScreen(props) {
           </View>
         </View>
       </Modal>
+        {
+            !props.isguest&&(<Pressable style={styles.button} onPress={()=>setIfModal(true)}>
+            <Text style={styles.buttonText}>Add Post</Text>
+            </Pressable>)
+        }
 
-      <Pressable style={styles.button} onPress={()=>setIfModal(true)}>
-      <Text style={styles.buttonText}>Add Post</Text>
-      </Pressable>
     </View>
 }
 

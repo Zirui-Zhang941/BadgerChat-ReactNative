@@ -8,8 +8,8 @@ import BadgerChatroomScreen from './screens/BadgerChatroomScreen';
 import BadgerRegisterScreen from './screens/BadgerRegisterScreen';
 import BadgerLoginScreen from './screens/BadgerLoginScreen';
 import BadgerLandingScreen from './screens/BadgerLandingScreen';
-
-
+import BadgerLogoutScreen from './screens/BadgerLogoutScreen';
+import BadgerConversionScreen from './screens/BadgerConversionScreen';
 const ChatDrawer = createDrawerNavigator();
 
 export default function App() {
@@ -17,7 +17,7 @@ export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isRegistering, setIsRegistering] = useState(false);
   const [chatrooms, setChatrooms] = useState([]);
-
+  const [isguest,setIsGuest]=useState(false);
   useEffect(() => {
     fetch("https://cs571.org/api/s24/hw9/chatrooms",{
       method:"Get",
@@ -55,9 +55,11 @@ export default function App() {
       });
       }
   }).then(data=>{
-    console.log(data);
-    SecureStore.setItemAsync("username",data.user.username);
-    SecureStore.setItemAsync(data.user.username,data.token);
+    //console.log(data);
+    if(data){
+      SecureStore.setItemAsync("username",data.user.username);
+      SecureStore.setItemAsync(data.user.username,data.token);
+    }
   }) // I should really do a fetch to login first!
   }
 
@@ -97,16 +99,28 @@ export default function App() {
           {
             chatrooms.map(chatroom => {
               return <ChatDrawer.Screen key={chatroom} name={chatroom}>
-                {(props) => <BadgerChatroomScreen name={chatroom} />}
+                {(props) => <BadgerChatroomScreen name={chatroom} isguest={isguest}/>}
               </ChatDrawer.Screen>
             })
           }
+          {
+            !isguest?(
+              <ChatDrawer.Screen name="Logout">
+                {(props) => <BadgerLogoutScreen setIsLoggedIn={setIsLoggedIn} />}
+              </ChatDrawer.Screen>
+            ) : (
+                <ChatDrawer.Screen name="Sign up" >
+                  {(props) => <BadgerConversionScreen  setIsLoggedIn={setIsLoggedIn} setIsRegistering={setIsRegistering}/>}
+                </ChatDrawer.Screen>
+              )
+          }
+
         </ChatDrawer.Navigator>
       </NavigationContainer>
     );
   } else if (isRegistering) {
     return <BadgerRegisterScreen handleSignup={handleSignup} setIsRegistering={setIsRegistering} />
   } else {
-    return <BadgerLoginScreen handleLogin={handleLogin} setIsRegistering={setIsRegistering} />
+    return <BadgerLoginScreen handleLogin={handleLogin} setIsRegistering={setIsRegistering} setIsLoggedIn={setIsLoggedIn} setIsGuest={setIsGuest}/>
   }
 }
