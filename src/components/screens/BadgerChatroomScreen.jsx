@@ -84,7 +84,7 @@ function BadgerChatroomScreen(props) {
             token={token}
             title={renderObj.item.title}
             poster={renderObj.item.poster}
-            contect={renderObj.item.content}
+            content={renderObj.item.content}
             //chatroom={renderObj.item.chatroom}
             created={renderObj.item.created}
             />
