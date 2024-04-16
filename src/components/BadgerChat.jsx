@@ -87,6 +87,7 @@ export default function App() {
   }).then(data=>{
     SecureStore.setItemAsync("username",data.user.username);
     SecureStore.setItemAsync(data.user.username,data.token);
+    setIsRegistering(false);
   })
      // I should really do a fetch to register first!
   }
@@ -110,7 +111,7 @@ export default function App() {
               </ChatDrawer.Screen>
             ) : (
                 <ChatDrawer.Screen name="Sign up" >
-                  {(props) => <BadgerConversionScreen  setIsLoggedIn={setIsLoggedIn} setIsRegistering={setIsRegistering}/>}
+                  {(props) => <BadgerConversionScreen  setIsLoggedIn={setIsLoggedIn} setIsRegistering={setIsRegistering} setIsGuest={setIsGuest}/>}
                 </ChatDrawer.Screen>
               )
           }

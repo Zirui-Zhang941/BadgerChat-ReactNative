@@ -4,6 +4,7 @@ function BadgerConversionScreen(props) {
     const handleConvert=()=>{
         props.setIsLoggedIn(false);
         props.setIsRegistering(true);
+        props.setIsGuest(false);
     }
     return <View style={styles.container}>
         <Text style={{fontSize: 24, marginTop: -100}}>Ready to signup?</Text>
